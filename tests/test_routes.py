@@ -29,10 +29,10 @@ class TestAccountService(TestCase):
     @classmethod
     def setUpClass(cls):
         """Run once before all tests"""
-        app.config["TESTING"] = True
-        app.config["DEBUG"] = False
+#        app.config["TESTING"] = True
+#        app.config["DEBUG"] = False
         app.config["SQLALCHEMY_DATABASE_URI"] = DATABASE_URI
-        app.logger.setLevel(logging.CRITICAL)
+ #       app.logger.setLevel(logging.CRITICAL)
         init_db(app)
 
     @classmethod
@@ -128,7 +128,6 @@ class TestAccountService(TestCase):
     def test_get_account(self):
         """IT should Read a single Account"""
         account = self._create_accounts(1)[0]
-        print (account)
         resp= self.client.get(f"{BASE_URL}/{account.id}", content_type="application/json")
         self.assertEqual(resp.status_code, status.HTTP_200_OK)
         data = resp.get_json()
@@ -139,8 +138,48 @@ class TestAccountService(TestCase):
         self._create_accounts(5)
         resp= self.client.get(f"{BASE_URL}", content_type="application/json")
         data = resp.get_json()
-        print(data)
         self.assertEqual(len(data),5)
+
+    def test_update_account(self):
+        #account1 = self._create_accounts(1)
+
+        account = AccountFactory(email="advent@change.me")
+        account.create()
+
+        self.assertIsNotNone(account.id)
+        self.assertEqual(account.email, "advent@change.me")
+
+        account = Account.find(account.id)
+        account.email = "XYZZY@plugh.com"
+
+        resp = self.client.put(
+            f"{BASE_URL}/{account.id}",
+            json=account.serialize(),
+            content_type="application/json"
+        )
+
+        data = resp.get_json()
+
+        self.assertEqual(data["email"],"XYZZY@plugh.com")
+    
+    def test_delete_account(self):
+
+        account = self._create_accounts(1)[0]
+
+        resp = self.client.delete(
+            f"{BASE_URL}/{account.id}",
+            content_type="application/json"
+        )
+
+        accounts = Account.all()
+
+        self.assertEqual(len(accounts),0)
+
+
+
+
+
+
 
 
 
