@@ -62,6 +62,24 @@ def create_accounts():
 ######################################################################
 
 # ... place you code here to LIST accounts ...
+@app.route("/accounts",methods=["GET"])
+def list_accounts():
+    messages = []
+
+    accounts = Account.all()
+
+    for account in  accounts:
+        message = account.serialize()
+        messages.append(message)
+
+    if len(accounts)==0:
+        return make_response(
+            jsonify("{{}}", status.HTTP_200_OK)
+        )
+    
+    return make_response(
+        jsonify(messages, status.HTTP_200_OK)
+    )
 
 
 ######################################################################
@@ -69,7 +87,16 @@ def create_accounts():
 ######################################################################
 
 # ... place you code here to READ an account ...
+@app.route("/accounts/<int:account_id>",methods=["GET"])
+def get_accounts(account_id):
+    
+    account = Account.find(account_id)
 
+    if not account:
+        abort(status.HTTP_404_NOT_FOUND, f"Account with id [{account_id}] could not be found")
+    
+    return account.serialize(), status.HTTP_200_OK
+    
 
 ######################################################################
 # UPDATE AN EXISTING ACCOUNT
