@@ -57,26 +57,27 @@ def create_accounts():
         jsonify(message), status.HTTP_201_CREATED, {"Location": location_url}
     )
 
+
 ######################################################################
 # LIST ALL ACCOUNTS
 ######################################################################
 
 # ... place you code here to LIST accounts ...
-@app.route("/accounts",methods=["GET"])
+@app.route("/accounts", methods=["GET"])
 def list_accounts():
     messages = []
 
     accounts = Account.all()
 
-    for account in  accounts:
+    for account in accounts:
         message = account.serialize()
         messages.append(message)
 
-    if len(accounts)==0:
+    if len(accounts) == 0:
         return make_response(
             jsonify("{{}}"), status.HTTP_200_OK
         )
-    
+
     return make_response(
         jsonify(messages), status.HTTP_200_OK
     )
@@ -87,23 +88,23 @@ def list_accounts():
 ######################################################################
 
 # ... place you code here to READ an account ...
-@app.route("/accounts/<int:account_id>",methods=["GET"])
+@app.route("/accounts/<int:account_id>", methods=["GET"])
 def get_accounts(account_id):
-    
+
     account = Account.find(account_id)
 
     if not account:
         abort(status.HTTP_404_NOT_FOUND, f"Account with id [{account_id}] could not be found")
-    
+
     return account.serialize(), status.HTTP_200_OK
-    
+
 
 ######################################################################
 # UPDATE AN EXISTING ACCOUNT
 ######################################################################
 
 # ... place you code here to UPDATE an account ...
-@app.route("/accounts/<int:account_id>",methods=["PUT"])
+@app.route("/accounts/<int:account_id>", methods=["PUT"])
 def update_an_account(account_id):
 
     account = Account.find(account_id)
@@ -118,14 +119,12 @@ def update_an_account(account_id):
     return account.serialize(), status.HTTP_200_OK
 
 
-
-
 ######################################################################
 # DELETE AN ACCOUNT
 ######################################################################
 
 # ... place you code here to DELETE an account ...
-@app.route("/accounts/<int:account_id>",methods=["DELETE"])
+@app.route("/accounts/<int:account_id>", methods=["DELETE"])
 def delete_an_accout(account_id):
 
     account = Account.find(account_id)
@@ -136,8 +135,6 @@ def delete_an_accout(account_id):
     account.delete()
 
     return "", status.HTTP_204_NO_CONTENT
-
-
 
 
 ######################################################################

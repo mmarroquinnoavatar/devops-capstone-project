@@ -128,7 +128,7 @@ class TestAccountService(TestCase):
     def test_get_account(self):
         """IT should Read a single Account"""
         account = self._create_accounts(1)[0]
-        resp= self.client.get(f"{BASE_URL}/{account.id}", content_type="application/json")
+        resp = self.client.get(f"{BASE_URL}/{account.id}", content_type="application/json")
         self.assertEqual(resp.status_code, status.HTTP_200_OK)
         data = resp.get_json()
         self.assertEqual(data["name"], account.name)
@@ -138,25 +138,24 @@ class TestAccountService(TestCase):
         print(resp)
         data = resp.get_json()
         print(data)
-        self.assertEqual(data,"{{}}")
+        self.assertEqual(data, "{{}}")
 
     def test_fake_account(self):
         account = AccountFactory(email="nano@gmail.com")
 
-        resp=self.client.get(f"{BASE_URL}/{account.id}", content_type="application/json")
+        resp = self.client.get(f"{BASE_URL}/{account.id}", content_type="application/json")
         self.assertEqual(resp.status_code, status.HTTP_404_NOT_FOUND)
-    
+
     def test_get_all_accounts(self):
         """IT should Read all Accounts"""
         self._create_accounts(5)
-        resp= self.client.get(f"{BASE_URL}", content_type="application/json")
+        resp = self.client.get(f"{BASE_URL}", content_type="application/json")
         data = resp.get_json()
-        self.assertEqual(len(data),5)
-
+        self.assertEqual(len(data), 5)
 
     def test_update_fakeuser(self):
         account = AccountFactory()
-        account.id="1234"
+        account.id = "1234"
 
         resp = self.client.put(
             f"{BASE_URL}/{account.id}",
@@ -168,7 +167,7 @@ class TestAccountService(TestCase):
 
     def test_delete_fakeuser(self):
         account = AccountFactory()
-        account.id="1234"
+        account.id = "1234"
 
         resp = self.client.delete(
             f"{BASE_URL}/{account.id}",
@@ -179,7 +178,7 @@ class TestAccountService(TestCase):
         self.assertEqual(resp.status_code, status.HTTP_404_NOT_FOUND)
 
     def test_update_account(self):
-        
+
         account = AccountFactory(email="advent@change.me")
         account.create()
 
@@ -197,27 +196,17 @@ class TestAccountService(TestCase):
 
         data = resp.get_json()
 
-        self.assertEqual(data["email"],"XYZZY@plugh.com")
-    
+        self.assertEqual(data["email"], "XYZZY@plugh.com")
+
     def test_delete_account(self):
 
         account = self._create_accounts(1)[0]
 
-        resp = self.client.delete(
+        self.client.delete(
             f"{BASE_URL}/{account.id}",
             content_type="application/json"
         )
 
         accounts = Account.all()
 
-        self.assertEqual(len(accounts),0)
-
-
-
-
-
-
-
-
-
-
+        self.assertEqual(len(accounts), 0)
