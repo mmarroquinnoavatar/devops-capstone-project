@@ -29,10 +29,10 @@ class TestAccountService(TestCase):
     @classmethod
     def setUpClass(cls):
         """Run once before all tests"""
-#        app.config["TESTING"] = True
-#        app.config["DEBUG"] = False
+        app.config["TESTING"] = True
+        app.config["DEBUG"] = False
         app.config["SQLALCHEMY_DATABASE_URI"] = DATABASE_URI
- #       app.logger.setLevel(logging.CRITICAL)
+        app.logger.setLevel(logging.CRITICAL)
         init_db(app)
 
     @classmethod
@@ -133,6 +133,19 @@ class TestAccountService(TestCase):
         data = resp.get_json()
         self.assertEqual(data["name"], account.name)
 
+    def test_no_accounts(self):
+        resp = self.client.get(f"{BASE_URL}", content_type="application/json")
+        print(resp)
+        data = resp.get_json()
+        print(data)
+        self.assertEqual(data,"{{}}")
+
+    def test_fake_account(self):
+        account = AccountFactory(email="nano@gmail.com")
+
+        resp=self.client.get(f"{BASE_URL}/{account.id}", content_type="application/json")
+        self.assertEqual(resp.status_code, status.HTTP_404_NOT_FOUND)
+    
     def test_get_all_accounts(self):
         """IT should Read all Accounts"""
         self._create_accounts(5)
@@ -140,9 +153,33 @@ class TestAccountService(TestCase):
         data = resp.get_json()
         self.assertEqual(len(data),5)
 
-    def test_update_account(self):
-        #account1 = self._create_accounts(1)
 
+    def test_update_fakeuser(self):
+        account = AccountFactory()
+        account.id="1234"
+
+        resp = self.client.put(
+            f"{BASE_URL}/{account.id}",
+            json=account.serialize(),
+            content_type="application/json"
+        )
+
+        self.assertEqual(resp.status_code, status.HTTP_404_NOT_FOUND)
+
+    def test_delete_fakeuser(self):
+        account = AccountFactory()
+        account.id="1234"
+
+        resp = self.client.delete(
+            f"{BASE_URL}/{account.id}",
+            json=account.serialize(),
+            content_type="application/json"
+        )
+
+        self.assertEqual(resp.status_code, status.HTTP_404_NOT_FOUND)
+
+    def test_update_account(self):
+        
         account = AccountFactory(email="advent@change.me")
         account.create()
 

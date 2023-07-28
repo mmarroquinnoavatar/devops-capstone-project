@@ -74,7 +74,7 @@ def list_accounts():
 
     if len(accounts)==0:
         return make_response(
-            jsonify("{{}}", status.HTTP_200_OK)
+            jsonify("{{}}"), status.HTTP_200_OK
         )
     
     return make_response(
